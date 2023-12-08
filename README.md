@@ -1,4 +1,4 @@
-# retail_sales
+# U.S historical Retail Sales
 
 This project refers to a historical U.S Time Series Analysis between 1992 to 2020.
 
