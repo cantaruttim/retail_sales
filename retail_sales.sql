@@ -69,3 +69,79 @@ WHERE kind_of_business IN (
 				)
 GROUP BY 1, 2
 ;
+
+SELECT -- This Query is noisy
+	sales_month
+    , kind_of_business
+    , sales
+FROM retail_sales
+WHERE kind_of_business IN ( -- in SQL Server 'Men''s clothing stores'
+	"Men's clothing stores",
+    "Women's clothing stores"
+    )
+;
+
+SELECT -- with a smooth pattern
+	EXTRACT(YEAR FROM sales_month) AS "Sales_Year"
+    , kind_of_business
+    , SUM(sales) AS "Sales"
+FROM retail_sales
+WHERE kind_of_business IN (
+				"Men's clothing stores",
+				"Women's clothing stores"
+    )
+GROUP BY 1, 2
+;
+
+
+
+SELECT SALES_YEAR
+	, Womens_Sales - Mens_Sales AS Womens_Minus_Mens
+    , Mens_Sales - Womens_Sales AS Mens_Minus_Womens
+FROM (
+	SELECT 
+		EXTRACT(YEAR FROM sales_month) AS "SALES_YEAR"
+		, SUM(
+			CASE 
+				WHEN kind_of_business = "Women's clothing stores" 
+				THEN sales
+			END) AS Womens_Sales
+		, SUM(
+			CASE
+				WHEN kind_of_business = "Men's clothing stores"
+				THEN sales
+			END) AS Mens_Sales
+	FROM retail_sales
+	WHERE kind_of_business IN (
+		"Women's clothing stores",
+		"Men's clothing stores"
+		) 
+        AND sales_month >= "2015-12-01"
+	GROUP BY 1
+) a 
+;
+
+
+
+/* we can calculate the gap between the two categories, 
+the ratio, and the percent difference between them.*/
+
+SELECT 
+	EXTRACT(YEAR FROM sales_month) AS "SALES_YEAR"
+    , SUM(
+		CASE 
+			WHEN kind_of_business = "Women's clothing stores" 
+            THEN sales
+        END) AS Womens_Sales
+	, SUM(
+		CASE
+			WHEN kind_of_business = "Men's clothing stores"
+            THEN sales
+		END) AS Mens_Sales
+FROM retail_sales
+WHERE kind_of_business IN (
+	"Women's clothing stores",
+    "Men's clothing stores"
+    )
+GROUP BY 1
+;
