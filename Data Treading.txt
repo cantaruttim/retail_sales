@@ -1,0 +1,7 @@
+SELECT sales_month, kind_of_business, sales
+,sum(sales) over (partition by sales_month) as total_sales
+,sales * 100 / sum(sales) over (partition by sales_month) as pct_total
+FROM retail_sales
+WHERE kind_of_business in ('Men''s clothing stores'
+,'Women''s clothing stores')
+;
